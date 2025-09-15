@@ -50,4 +50,5 @@ function decoration() {
     const decorations = ["*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "*", "+", "º"]
     return decorations[Math.floor(Math.random() * decorations.length)]
 }
+
 afficherSapin(3,4)
