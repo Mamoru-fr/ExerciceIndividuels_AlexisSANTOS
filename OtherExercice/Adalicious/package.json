@@ -1,4 +1,8 @@
 {
+  "name": "adalicious",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Adalicious.js",
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^5.1.0",
@@ -8,5 +12,7 @@
     "start": "node Adalicious.js",
     "dev": "nodemon Adalicious.js"
   },
-  "type": "module"
+  "type": "module",
+  "keywords": [],
+  "license": "MIT"
 }
