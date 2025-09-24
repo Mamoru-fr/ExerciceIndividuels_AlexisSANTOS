@@ -39,7 +39,7 @@ app.get("/menu/:id", (req, res) => {
 });
 
 app.get("/orders", (req, res) => {
-    db.all(`SELECT * FROM Orders`, [], (err, orders) => {
+    db.all(`SELECT Orders.id, User.name AS "UserName", Plates.name AS "Plates", Plates.images, Orders.Status FROM Orders JOIN User ON Orders.id_user is User.id JOIN Plates ON Orders.id_plates is Plates.id ORDER BY Orders.id`, [], (err, orders) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
@@ -47,7 +47,7 @@ app.get("/orders", (req, res) => {
     })
 })
 
-app.get("/order", (req, res) => {
+app.get("/plates", (req, res) => {
     db.all(`SELECT * FROM Plates`, [], (err, plates) => {
         if (err) {
             return res.status(500).json({ error: err.message });
@@ -56,30 +56,41 @@ app.get("/order", (req, res) => {
     })
 })
 
-app.post("/order", (req, res) => {
+app.post("/order", async (req, res) => {
     console.log("[POST/orders] body reçu:", req.body);
-    const  {plate_id, client_id} = req.body;
+    const {plate_id, client_id} = req.body;
+    
+    // Validate input
     if (!plate_id || !client_id) {
         return res.status(400).json({ error: "Champs manquants ou invalides" });  
     }
-    db.get(`SELECT MAX(id) as maxId FROM Orders`, [], (err, row) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        const id = (row?.maxId || 0) + 1;
-        console.log(`[COMMANDE REÇUE] id=${id} | plat=nº${plate_id} | client=nº${client_id}`);
-        db.run(
-            `INSERT INTO Orders (id, id_user, id_plates, Status) VALUES (?, ?, ?, ?)`,
-            [id, client_id, plate_id, "pending"],
-            function(err) {
-                if (err) {
-                    return res.status(500).json({ error: err.message });
-                }
-                res.json({ id: id, message: "Commande créée avec succès" });
-            }
-        );
+    // Get next order ID
+    const row = await new Promise((resolve, reject) => {
+        db.get('SELECT MAX(id) as maxId FROM Orders', [], (err, row) => {
+            if (err) reject(err);
+            resolve(row);
+        });
     });
-})
+    const id = (row?.maxId || 0) + 1;
+    console.log(`[COMMANDE REÇUE] id=${id} | plat=nº${plate_id} | client=nº${client_id}`);
+
+        // Create the order
+        await new Promise((resolve, reject) => {
+            db.run(
+                'INSERT INTO Orders (id, id_user, id_plates, Status) VALUES (?, ?, ?, ?)',
+                [id, client_id, plate_id, "pending"],
+                function(err) {
+                    if (err) reject(err);
+                    resolve();
+                }
+            );
+        });
+        res.json({ 
+            ok: true, 
+            id: id, 
+            message: "Commande créée avec succès" 
+        });
+});
 
 app.get("/clients", (req, res) => {
     db.all(`SELECT * FROM User`, [], (err, clients) => {
@@ -92,10 +103,69 @@ app.get("/clients", (req, res) => {
 
 app.get("/clients/:id", (req, res) => {
     const id = Number(req.params.id);
-    db.all(`SELECT * FROM User`, [], (err, client) => {
+    db.all(`SELECT * FROM User WHERE id = ?`, [id], (err, client) => {
         if (!client) return res.status(404).json({ error: `Client id=${id} non trouvé` });
         res.json(client)
     });
+});
+
+app.get("/newclient", (req, res) => {
+    db.all(`SELECT Max(id) as maxId FROM User`, [], (err, maxId) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(maxId);
+    });
+});
+
+app.get("/alreadyclient", async (req, res) => {
+    const { name } = req.query;
+    try {
+        // First, check if user exists
+        db.all(`SELECT * FROM User WHERE name = ?`, [name], async (err, clients) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+
+            // If client exists, return their info
+            if (clients && clients.length > 0) {
+                return res.json({ id: clients[0].id, message: "Client existant" });
+            }
+
+            // If client doesn't exist, create new one
+            try {
+                // Get max ID for new client
+                const newIdResult = await new Promise((resolve, reject) => {
+                    db.get(`SELECT MAX(id) as maxId FROM User`, [], (err, row) => {
+                        if (err) reject(err);
+                        else resolve(row);
+                    });
+                });
+
+                const newId = (newIdResult.maxId || 0) + 1;
+
+                // Insert new client
+                await new Promise((resolve, reject) => {
+                    db.run(
+                        `INSERT INTO User (id, name) VALUES (?, ?)`,
+                        [newId, name],
+                        function(err) {
+                            if (err) reject(err);
+                            else resolve();
+                        }
+                    );
+                });
+
+                return res.json({ id: newId, message: "Nouveau client créé avec succès" });
+            } catch (error) {
+                console.error('Error creating new client:', error);
+                return res.status(500).json({ error: "Erreur lors de la création du client" });
+            }
+        });
+    } catch (error) {
+        console.error('Error in alreadyclient:', error);
+        return res.status(500).json({ error: "Erreur serveur" });
+    }
 });
 
 app.listen(port, () => {

@@ -5,13 +5,14 @@
   <meta charset="UTF-8">
   <title>Accueil</title>
   <link rel="stylesheet" href="../css/styles.css">
+  <script src="../js/index.js" defer></script>
 </head>
 
 <body>
   <h1>Bienvenue dans notre restaurant</h1>
-  <form action="/menu" method="GET">
+  <form id="nameForm">
     <label for="name">Entrez votre prénom :</label>
-    <input type="text" id="name" name="name" placeholder="Ex: Zoé...">
+    <input type="text" id="name" name="name" placeholder="Ex: Zoé..." required>
     <button type="submit">Voir les menus</button>
   </form>
 </body>
