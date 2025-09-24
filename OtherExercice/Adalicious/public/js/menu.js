@@ -38,7 +38,7 @@ async function commanderPlat(plat) {
     alert(`✅ ${data.message}`);
   } catch (e) {
     console.error('Erreur de commande:', e);
-    alert(`❌ Impossible d'envoyer la commande: ${e.message}`);
+    alert(`❌ Impossible d'envoyer la commande`);
   }
 }
 

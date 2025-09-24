@@ -26,6 +26,10 @@ app.get('/order', (req, res) => {
     res.sendFile(join(__dirname, 'pages', 'kitchen.html'))
 })
 
+app.get('/olderOrders', (req, res) => {
+    res.sendFile(join(__dirname, 'pages', 'olderOrders.html'))
+});
+
 app.listen(port, () => {
     console.log(`Example app listening on port ${port}`);
 });

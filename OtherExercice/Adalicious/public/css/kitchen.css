@@ -1,0 +1,139 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+}
+
+body {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background-image: url('../images/Background.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+h1 {
+    text-align: center;
+    margin: 30px 0;
+    font-size: 2.5em;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+    color: white;
+}
+
+/* Orders list styling */
+#commandes-list {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+    margin: 0 auto;
+}
+
+#commandes-list li {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transition: transform 0.3s ease;
+}
+
+#commandes-list li:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Emoji styling */
+#commandes-list span {
+    font-size: 2em;
+    margin-bottom: 10px;
+}
+
+/* Plate name styling */
+#commandes-list strong {
+    font-size: 1.2em;
+    margin: 10px 0;
+    color: #333;
+    font-family: 'Comic Sans MS', cursive, sans-serif;
+}
+
+/* Customer name styling */
+#commandes-list p {
+    margin: 10px 0;
+    color: #666;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+/* Status styling */
+#commandes-list em {
+    color: #f39c12;
+    font-style: normal;
+    font-weight: bold;
+    margin: 10px 0;
+    display: block;
+}
+
+/* Button container */
+#commandes-list div {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+/* Button styling - Ready */
+#commandes-list button:first-child {
+    padding: 8px 20px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#commandes-list button:first-child:hover {
+    background-color: #45a049;
+}
+
+/* Button styling - Cancel */
+#commandes-list button:last-child {
+    padding: 8px 20px;
+    font-size: 16px;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+#commandes-list button:last-child:hover {
+    background-color: #c0392b;
+}
+
+/* Active button state */
+#commandes-list button:active {
+    transform: translateY(1px);
+}
+
+/* Status colors */
+#commandes-list li[data-status="pending"] em {
+    color: #f39c12;
+}
+
+#commandes-list li[data-status="ready"] em {
+    color: #4CAF50;
+}
+
+#commandes-list li[data-status="cancelled"] em {
+    color: #e74c3c;
+}

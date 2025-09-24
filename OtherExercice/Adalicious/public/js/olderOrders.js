@@ -21,7 +21,7 @@ async function updateOrderStatus(orderId, newStatus) {
 
 async function fetchCommandes() {
   try {
-    const res = await fetch(`http://localhost:3000/ordersPending`);
+    const res = await fetch(`http://localhost:3000/olderOrders`);
     const commandes = await res.json();
     console.log('commandes', commandes);
     const ul = document.getElementById('commandes-list');

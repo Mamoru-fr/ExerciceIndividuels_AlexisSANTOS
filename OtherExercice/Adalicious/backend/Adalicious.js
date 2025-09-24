@@ -47,12 +47,21 @@ app.get("/orders", (req, res) => {
     })
 })
 
-app.get("/plates", (req, res) => {
-    db.all(`SELECT * FROM Plates`, [], (err, plates) => {
+app.get("/olderOrders", (req, res) => {
+    db.all(`SELECT Orders.id, User.name AS "UserName", Plates.name AS "Plates", Plates.images, Orders.Status FROM Orders JOIN User ON Orders.id_user is User.id JOIN Plates ON Orders.id_plates is Plates.id WHERE Orders.Status IN ('ready','cancelled') ORDER BY Orders.id`, [], (err, orders) => {
         if (err) {
             return res.status(500).json({ error: err.message });
         }
-        res.json(plates);
+        res.json(orders);
+    })
+})
+
+app.get("/ordersPending", (req, res) => {
+    db.all(`SELECT Orders.id, User.name AS "UserName", Plates.name AS "Plates", Plates.images, Orders.Status FROM Orders JOIN User ON Orders.id_user is User.id JOIN Plates ON Orders.id_plates is Plates.id WHERE Orders.Status = 'pending' ORDER BY Orders.id`, [], (err, orders) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(orders);
     })
 })
 
@@ -91,6 +100,44 @@ app.post("/order", async (req, res) => {
             message: "Commande créée avec succès" 
         });
 });
+
+app.patch("/orderstatus/:id", (req, res) => {
+    const id = Number(req.params.id);
+    const { status } = req.body;
+
+    // Validate input
+    if (!status || !["pending", "ready", "cancelled"].includes(status)) {
+        return res.status(400).json({ error: "Statut invalide" });
+    }
+
+    // Update order status
+    db.run(
+        'UPDATE Orders SET Status = ? WHERE id = ?',
+        [status, id],
+        function(err) {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+            if (this.changes === 0) {
+                return res.status(404).json({ error: `Commande id=${id} non trouvée` });
+            }
+            res.json({ 
+                ok: true, 
+                message: `Statut de la commande id=${id} mis à jour à '${status}'` 
+            });
+        }
+    );
+})
+
+app.get("/plates", (req, res) => {
+    db.all(`SELECT * FROM Plates`, [], (err, plates) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        res.json(plates);
+    })
+})
+
 
 app.get("/clients", (req, res) => {
     db.all(`SELECT * FROM User`, [], (err, clients) => {
