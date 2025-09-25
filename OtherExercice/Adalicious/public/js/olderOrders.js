@@ -19,6 +19,19 @@ async function updateOrderStatus(orderId, newStatus) {
     }
 }
 
+function getStatusIcon(status) {
+    switch(status.toLowerCase()) {
+        case 'pending':
+            return '⏳';
+        case 'ready':
+            return '✅';
+        case 'cancelled':
+            return '❌';
+        default:
+            return '❓';
+    }
+}
+
 async function fetchCommandes() {
   try {
     const res = await fetch(`http://localhost:3000/olderOrders`);
@@ -38,31 +51,12 @@ async function fetchCommandes() {
         UserNameEl.textContent = "Commande de " + commande.UserName;
         li.appendChild(UserNameEl);
         const status = document.createElement('em');
-        status.textContent = `Statut: ${commande.Status}`;
+        status.setAttribute('data-status', commande.Status.toLowerCase());
+        // Add status icon based on the status
+        const statusIcon = getStatusIcon(commande.Status);
+        status.textContent = `${statusIcon} Statut: ${commande.Status}`;
         li.appendChild(status);
 
-        // Create a container for buttons
-        const buttonContainer = document.createElement('div');
-        buttonContainer.style.display = 'flex';
-        buttonContainer.style.gap = '10px';
-        buttonContainer.style.marginTop = '10px';
-
-        // Create Ready button
-        const btnReady = document.createElement('button');
-        btnReady.textContent = 'Prêt';
-        btnReady.addEventListener('click', () => updateOrderStatus(commande.id, 'ready'));
-        
-        // Create Cancel button
-        const btnCancel = document.createElement('button');
-        btnCancel.textContent = 'Annuler';
-        btnCancel.addEventListener('click', () => updateOrderStatus(commande.id, 'cancelled'));
-        
-        // Add buttons to container
-        buttonContainer.appendChild(btnReady);
-        buttonContainer.appendChild(btnCancel);
-        
-        // Add container to list item
-        li.appendChild(buttonContainer);
         ul.appendChild(li);
     });
   } catch (err) {

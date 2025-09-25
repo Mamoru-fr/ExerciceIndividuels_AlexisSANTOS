@@ -9,7 +9,12 @@
 
 <body>
     <h1>Adalicious 🥦</h1>
-    <h3><span id="client_name"></span></h3>
+    <h3>
+        <span id="client_name"></span>
+        <button id="view-orders" onclick="window.location.href=`/clientOrders?clientId=${new URLSearchParams(window.location.search).get('clientId')}`">
+            Voir mes commandes 📋
+        </button>
+    </h3>
     <ul id="menu-list"></ul>
     <script src="../js/menu.js">
     </script>

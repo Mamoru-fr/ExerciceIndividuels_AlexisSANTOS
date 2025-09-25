@@ -74,11 +74,32 @@ h1 {
 
 /* Status styling */
 #commandes-list em {
-    color: #f39c12;
     font-style: normal;
     font-weight: bold;
     margin: 10px 0;
     display: block;
+    padding: 8px 15px;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+/* Pending status */
+#commandes-list em[data-status="pending"] {
+    color: #f39c12;
+    background-color: rgba(243, 156, 18, 0.1);
+}
+
+/* Ready status */
+#commandes-list em[data-status="ready"] {
+    color: #4CAF50;
+    background-color: rgba(76, 175, 80, 0.1);
+}
+
+/* Cancelled status */
+#commandes-list em[data-status="cancelled"] {
+    color: #e74c3c;
+    background-color: rgba(231, 76, 60, 0.1);
 }
 
 /* Button container */

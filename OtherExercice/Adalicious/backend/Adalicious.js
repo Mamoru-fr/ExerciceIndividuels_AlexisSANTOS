@@ -30,14 +30,6 @@ app.get("/menu", (req, res) => {
   });
 })
 
-app.get("/menu/:id", (req, res) => {
-    const id = Number(req.params.id);
-    db.all(`SELECT * FROM Plates WHERE id is ${id}`, [], (err, plat) => {
-        if (!plat) return res.status(404).json({ error: `Plat id=${id} non trouvé` });
-        res.json(plat) 
-    })
-});
-
 app.get("/orders", (req, res) => {
     db.all(`SELECT Orders.id, User.name AS "UserName", Plates.name AS "Plates", Plates.images, Orders.Status FROM Orders JOIN User ON Orders.id_user is User.id JOIN Plates ON Orders.id_plates is Plates.id ORDER BY Orders.id`, [], (err, orders) => {
         if (err) {
@@ -101,6 +93,53 @@ app.post("/order", async (req, res) => {
         });
 });
 
+app.get("/orders/:clientId", (req, res) => {
+    const clientId = Number(req.params.clientId);
+    
+    // Validate clientId
+    if (isNaN(clientId) || clientId <= 0) {
+        return res.status(400).json({ error: "ID client invalide" });
+    }
+
+    // First check if client exists
+    db.get('SELECT id FROM User WHERE id = ?', [clientId], (err, client) => {
+        if (err) {
+            return res.status(500).json({ error: err.message });
+        }
+        if (!client) {
+            return res.status(404).json({ error: "Client non trouvé" });
+        }
+
+        // If client exists, get their orders
+        db.all(`
+            SELECT 
+                Orders.id,
+                Plates.name AS "Plates",
+                Plates.images,
+                Plates.desc AS "Description",
+                Orders.Status
+            FROM Orders 
+            JOIN Plates ON Orders.id_plates = Plates.id 
+            WHERE Orders.id_user = ? 
+            ORDER BY 
+                CASE 
+                    WHEN Orders.Status = 'pending' THEN 1
+                    WHEN Orders.Status = 'ready' THEN 2
+                    ELSE 3
+                END,
+                Orders.id
+        `, [clientId], (err, orders) => {
+            if (err) {
+                return res.status(500).json({ error: err.message });
+            }
+            res.json({
+                ok: true,
+                orders: orders || []
+            });
+        });
+    });
+});
+
 app.patch("/orderstatus/:id", (req, res) => {
     const id = Number(req.params.id);
     const { status } = req.body;
@@ -138,7 +177,6 @@ app.get("/plates", (req, res) => {
     })
 })
 
-
 app.get("/clients", (req, res) => {
     db.all(`SELECT * FROM User`, [], (err, clients) => {
         if (err) {
@@ -153,15 +191,6 @@ app.get("/clients/:id", (req, res) => {
     db.all(`SELECT * FROM User WHERE id = ?`, [id], (err, client) => {
         if (!client) return res.status(404).json({ error: `Client id=${id} non trouvé` });
         res.json(client)
-    });
-});
-
-app.get("/newclient", (req, res) => {
-    db.all(`SELECT Max(id) as maxId FROM User`, [], (err, maxId) => {
-        if (err) {
-            return res.status(500).json({ error: err.message });
-        }
-        res.json(maxId);
     });
 });
 
