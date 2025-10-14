@@ -1,14 +1,17 @@
 type Props = {
     progress: number;
+    goal: number;
+    style?: React.CSSProperties;
 }
 
-const ProgressBar = ({ progress }: Props) => {
+const ProgressBar = ({ progress, goal, style}: Props) => {
+    const percentage = (progress / goal) * 100;
   return (
-    <div style={styles.container}>
+    <div style={{...styles.container, ...style}}>
       <div
         style={{
           ...styles.progressBar,
-          width: `${progress}%`,
+          width: `${percentage}%`,
         }}
       />
     </div>
@@ -21,6 +24,7 @@ const styles = {
     backgroundColor: '#eee',
     borderRadius: 5,
     overflow: 'hidden',
+    margin: '20px 0',
   },
   progressBar: {
     height: 10,
