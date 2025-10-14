@@ -44,7 +44,6 @@ export const Task = ({item, id, setResult, style}: Props) => {
                     </button>
                 ) : null
             }
-
         </div>
     )
 }

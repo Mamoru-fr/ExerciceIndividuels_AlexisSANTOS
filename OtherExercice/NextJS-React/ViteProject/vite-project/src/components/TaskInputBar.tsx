@@ -25,6 +25,7 @@ export const TaskInputBar = ({inputValue, setInputValue, setResult, setGoal}: Pr
         setInputValue('')
         setGoal(g => g + 1);
         setIsUrgent(false);
+        console.log(newTask);
     }
 
     return (
@@ -45,6 +46,16 @@ export const TaskInputBar = ({inputValue, setInputValue, setResult, setGoal}: Pr
                 style={{...style.urgentButton, backgroundColor: isUrgent ? '#f54242' : '#ccc'}}
             >
                 Urgent
+            </button>
+            <button
+                type="button"
+                aria-label={`New Task`}
+                onClick={() => {
+                    addTask();
+                }}
+                style={{...style.urgentButton, backgroundColor: '#3ae5e8ff'}}
+            >
+                New Task
             </button>
         </div>
     )
