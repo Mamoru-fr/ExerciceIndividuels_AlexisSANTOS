@@ -23,7 +23,7 @@ function App() {
 
   return (
     <>
-      <h2>Bienvenue dans mon "application"!</h2>
+      <h2>Bienvenue dans ma "To Do List"!</h2>
       <TaskInputBar inputValue={inputValue} setInputValue={setInputValue} setResult={setResult} setGoal={setGoal} />
       <ProgressBar progress={progress} goal={goal} />
       <div style={{gap: 8, display: 'flex', marginBottom: 16, justifyContent: 'center'}}>
