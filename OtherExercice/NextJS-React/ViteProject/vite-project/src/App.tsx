@@ -19,19 +19,12 @@ function App() {
   const [progress, setProgress] = useState<number>(0)
   const [view, setView] = useState<number>(0)
 
-  useEffect(() => {
-    setProgress(result.filter(item => item.isCompleted).length)
-  }, [result])
+  useEffect(() => {setProgress(result.filter(item => item.isCompleted).length)}, [result])
 
   return (
     <>
       <h2>Bienvenue dans mon "application"!</h2>
-      <TaskInputBar
-        inputValue={inputValue}
-        setInputValue={setInputValue}
-        setResult={setResult}
-        setGoal={setGoal}
-      />
+      <TaskInputBar inputValue={inputValue} setInputValue={setInputValue} setResult={setResult} setGoal={setGoal} />
       <ProgressBar progress={progress} goal={goal} />
       <div style={{gap: 8, display: 'flex', marginBottom: 16, justifyContent: 'center'}}>
         <ContentButton view={view} setView={setView} text="Non complétées" value={0} firstcondition={1} secondcondition={0} />
@@ -40,23 +33,11 @@ function App() {
       <p>{view === 0 ? 'Voir les tâches en cours' : 'Voir toutes les tâches complétées'}</p>
       {view === 0 ? (
         <div>
-          <TaskSection 
-          title="tâches urgentes"
-          items={result.filter((item) => item.isUrgent && !item.isCompleted)}
-          setResult={setResult}
-          />
-          <TaskSection 
-          title="tâches non urgentes"
-          items={result.filter((item) => !item.isUrgent && !item.isCompleted)}
-          setResult={setResult}
-          />
+          <TaskSection title="tâches urgentes" items={result.filter((item) => item.isUrgent && !item.isCompleted)} setResult={setResult} />
+          <TaskSection title="tâches non urgentes" items={result.filter((item) => !item.isUrgent && !item.isCompleted)} setResult={setResult} />
         </div>
       ) : (
-        <TaskSection 
-          title="tâches complétées"
-          items={result.filter((item) => item.isCompleted)}
-          setResult={setResult}
-          />
+        <TaskSection title="tâches complétées" items={result.filter((item) => item.isCompleted)} setResult={setResult} />
       )
       }
     </>
