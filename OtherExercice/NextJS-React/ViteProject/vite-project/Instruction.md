@@ -1,14 +1,47 @@
-# step 1
-afficher le contenu de votre input
+# Current Next Steps
 
-# step 2 
-faire une liste avec le contenu de l'input rentrer 
+## A. Play Button
 
-# step 3
-pouvoir supprimer les inputs rentrer 
+Add a button in the task to setup the task as `I doing it now`.
 
-# step 4
-commencer à faire le css 
+## B. Create the Second Screen
 
-# step 5
-faire une progressBar
+The second screen should be the screen where we can manipulate the task.
+Start it, pause it, resume it, "cancel it" (Stop the `To Do Now` and do it later).
+We should also have a timer to set a time to make the task.
+
+### 1. Create the second panel
+
+Create the second screen.
+We should have in the :
+* The title : `Currently doing`
+* The name of the Task Displayed
+* Timer Button
+* Timer Input 
+    * To enter the time we plan to do the time
+* The `I've done` Button
+* The Time field
+    * Where The time pass
+
+### 2. Make the CSS part
+
+### 3. Others Button
+
+On the second screen, we should have this animation :
+
+1. When the time is not set : 
+* Have the `I've done` Button
+* Have the `Give up` Button
+
+2. When the time pass :
+* Have the `I've done` Button
+* Have the Pause Button
+
+3. When the time is paused
+* Have the `I've done` Button
+* Have the `Give up` Button
+* Have the Resume Button
+
+## C. Theme
+
+Add the Light and Dark Background.

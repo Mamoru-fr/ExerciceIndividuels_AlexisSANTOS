@@ -1,14 +1,15 @@
+import {useView} from "../context/ViewContext";
+
 type Props = {
-    view: number;
-    setView: React.Dispatch<React.SetStateAction<number>>;
     text: string;
     value: number;
     firstcondition: number;
     secondcondition: number;
 }
 
-const ContentButton = ({view, setView, text, value, firstcondition, secondcondition}: Props) => {
-    return (
+const ContentButton = ({text, value, firstcondition, secondcondition}: Props) => {
+  const {view, setView} = useView();
+  return (
         <button
           type="button"
           onClick={() => setView(v => (v === value ? firstcondition : secondcondition))}

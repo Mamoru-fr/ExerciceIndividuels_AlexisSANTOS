@@ -1,32 +1,10 @@
 import {useState} from "react";
-import {type TaskItem} from '../constant/task';
+import {addTask} from '../constant/task';
+import {useTasks} from "../context/TasksContext";
 
-type Props = {
-    inputValue: string;
-    setInputValue: (value: string) => void;
-    setResult: React.Dispatch<React.SetStateAction<TaskItem[]>>
-    setGoal: (value: (prev: number) => number) => void;
-}
-
-export const TaskInputBar = ({inputValue, setInputValue, setResult, setGoal}: Props) => {
+export const TaskInputBar = () => {
+    const { inputValue, setInputValue, setResult, setGoal } = useTasks()
     const [isUrgent, setIsUrgent] = useState(false);
-
-
-    const addTask = () => {
-        const text = inputValue.trim();
-        if (!text) return
-        const newTask: TaskItem = {
-            id: Date.now(),
-            Text: text,
-            isCompleted: false,
-            isUrgent: isUrgent,
-        };
-        setResult(prev => [...prev, newTask])
-        setInputValue('')
-        setGoal(g => g + 1);
-        setIsUrgent(false);
-        console.log(newTask);
-    }
 
     return (
         <div>
@@ -35,7 +13,11 @@ export const TaskInputBar = ({inputValue, setInputValue, setResult, setGoal}: Pr
                 value={inputValue}
                 placeholder='Entrez quelque chose'
                 onChange={(e) => setInputValue(e.target.value)}
-                onKeyDown={(e) => {if (e.key === 'Enter') {addTask()} }}
+                onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                        addTask({inputValue, isUrgent, setResult, setInputValue, setGoal})
+                    }
+                }}
             />
             <button
                 type="button"
@@ -51,7 +33,8 @@ export const TaskInputBar = ({inputValue, setInputValue, setResult, setGoal}: Pr
                 type="button"
                 aria-label={`New Task`}
                 onClick={() => {
-                    addTask();
+                    addTask({inputValue, isUrgent, setResult, setInputValue, setGoal});
+                    setIsUrgent(false);
                 }}
                 style={{...style.urgentButton, backgroundColor: '#3ae5e8ff'}}
             >

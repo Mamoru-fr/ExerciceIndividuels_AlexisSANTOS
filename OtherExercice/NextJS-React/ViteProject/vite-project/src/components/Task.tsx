@@ -1,13 +1,15 @@
 import type {TaskItem} from '../constant/task';
+import {useTasks} from '../context/TasksContext';
 
 type Props = {
     id: number | string;
     item: TaskItem;
-    setResult: React.Dispatch<React.SetStateAction<TaskItem[]>>;
     style?: React.CSSProperties;
 }
 
-export const Task = ({item, id, setResult, style}: Props) => {
+export const Task = ({item, id, style}: Props) => {
+    const { setResult } = useTasks();
+
     const toggleCompleted = () => {
         setResult(prev => prev.map(t => t.id === id ? {...t, isCompleted: !t.isCompleted} : t));
     }
@@ -30,20 +32,34 @@ export const Task = ({item, id, setResult, style}: Props) => {
                 </button>
                 <span style={styles.itemText}>{item.Text}</span>
             </div>
-            {
-                !item.isCompleted ? (
+            <div style={styles.taskRightPart}>
+                {
+                    !item.isCompleted ? (
+                        <button
+                            type="button"
+                            aria-label={`Urgent Task`}
+                            onClick={() => {
+                                toggleUrgent();
+                            }}
+                            style={{...styles.button.urgentButton, backgroundColor: item.isUrgent ? '#f5424250' : 'transparent'}}
+                        >
+                            {item.isUrgent ? '‼️' : '⚪'}
+                        </button>
+                    ) : null
+                }
+                <div>
                     <button
-                        type="button"
-                        aria-label={`Urgent Task`}
+                        type='button'
+                        aria-label={`Delete Task`}
                         onClick={() => {
-                            toggleUrgent();
+                            setResult(prev => prev.filter(t => t.id !== id));
                         }}
-                        style={{...styles.button.urgentButton, backgroundColor: item.isUrgent ? '#f5424250' : 'transparent'}}
+                        style={{...styles.button.urgentButton, backgroundColor: '#f54242'}}
                     >
-                        {item.isUrgent ? '‼️' : '⚪'}
+                        🗑️
                     </button>
-                ) : null
-            }
+                </div>
+            </div>
         </div>
     )
 }
@@ -82,5 +98,11 @@ const styles = {
     },
     taskLeftPart: {
         justifyContent: 'start',
+    },
+    taskRightPart: {
+        justifyContent: 'end',
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
     }
 };

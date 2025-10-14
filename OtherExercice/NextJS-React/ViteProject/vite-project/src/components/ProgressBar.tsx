@@ -1,10 +1,12 @@
+import React from 'react';
+import {useTasks} from "../context/TasksContext";
+
 type Props = {
-    progress: number;
-    goal: number;
     style?: React.CSSProperties;
 }
 
-const ProgressBar = ({ progress, goal, style}: Props) => {
+const ProgressBar = ({ style}: Props) => {
+  const {progress, goal} = useTasks();
     const percentage = (progress / goal) * 100;
   return (
     <div style={{...styles.container, ...style}}>
