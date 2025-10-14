@@ -1,9 +1,16 @@
 import {useEffect, useState} from 'react'
-import './App.css'
+
+// Components
 import ProgressBar from './components/ProgressBar'
-import {Task} from './components/Task'
 import {TaskInputBar} from './components/TaskInputBar'
+import ContentButton from './components/ContentButton'
+import TaskSection from './components/TaskSection'
+
+// Constants
 import type {TaskItem} from './constant/task'
+
+// Styles
+import './App.css'
 
 function App() {
   const [inputValue, setInputValue] = useState<string>('')
@@ -27,73 +34,33 @@ function App() {
       />
       <ProgressBar progress={progress} goal={goal} />
       <div style={{gap: 8, display: 'flex', marginBottom: 16, justifyContent: 'center'}}>
-        <button
-          type="button"
-          onClick={() => setView(v => (v === 0 ? 1 : 0))}
-          style={{backgroundColor: view === 0 ? '#008000ff' : '#ccc'}}
-        >
-          Non complétées
-        </button>
-        <button
-          type="button"
-          onClick={() => setView(v => (v === 1 ? 0 : 1))}
-          style={{backgroundColor: view === 1 ? '#008000ff' : '#ccc'}}
-        >
-          Complétées
-        </button>
+        <ContentButton view={view} setView={setView} text="Non complétées" value={0} firstcondition={1} secondcondition={0} />
+        <ContentButton view={view} setView={setView} text="Complétées" value={1} firstcondition={0} secondcondition={1} />
       </div>
       <p>{view === 0 ? 'Voir les tâches en cours' : 'Voir toutes les tâches complétées'}</p>
       {view === 0 ? (
         <div>
-          <div>
-            <p>Il y a {result.filter(item => item.isUrgent).length} tâches urgentes</p>
-            <ul style={style.listWrapper}>
-              {result.filter(item => item.isUrgent && !item.isCompleted).map((item) => (
-                <Task
-                  key={item.id}
-                  id={item.id}
-                  item={item}
-                  setResult={setResult} />
-              ))}
-            </ul>
-          </div>
-          <div>
-            <p>Il y a {result.filter(item => !item.isUrgent).length} tâches non urgentes</p>
-            <ul style={style.listWrapper}>
-              {result.filter(item => !item.isUrgent && !item.isCompleted).map((item) => (
-                <Task
-                  key={item.id}
-                  item={item}
-                  id={item.id}
-                  setResult={setResult} />
-              ))}
-            </ul>
-          </div>
+          <TaskSection 
+          title="tâches urgentes"
+          items={result.filter((item) => item.isUrgent && !item.isCompleted)}
+          setResult={setResult}
+          />
+          <TaskSection 
+          title="tâches non urgentes"
+          items={result.filter((item) => !item.isUrgent && !item.isCompleted)}
+          setResult={setResult}
+          />
         </div>
       ) : (
-        <div>
-            <p>Il y a {result.filter(item => item.isCompleted).length} tâches complétées</p>
-            <ul style={style.listWrapper}>
-              {result.filter(item => item.isCompleted).map((item) => (
-                <Task
-                  key={item.id}
-                  item={item}
-                  id={item.id}
-                  setResult={setResult} />
-              ))}
-            </ul>
-          </div>
+        <TaskSection 
+          title="tâches complétées"
+          items={result.filter((item) => item.isCompleted)}
+          setResult={setResult}
+          />
       )
       }
     </>
   )
 }
-
-const style = {
-  listWrapper: {
-    paddingInlineStart: 0,
-    textAlign: 'left' as const,
-  },
-};
 
 export default App
