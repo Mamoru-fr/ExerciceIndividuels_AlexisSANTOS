@@ -10,6 +10,8 @@ type TasksContextValue = {
   setGoal: React.Dispatch<React.SetStateAction<number>>
   progress: number
   setProgress: React.Dispatch<React.SetStateAction<number>>
+  task: TaskItem | undefined
+  setTask: React.Dispatch<React.SetStateAction<TaskItem | undefined>>
 }
 
 const TasksContext = createContext<TasksContextValue | undefined>(undefined)

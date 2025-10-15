@@ -2,8 +2,9 @@
 import {useEffect, useState} from 'react'
 
 // Components
-import ProgressBar from './components/ProgressBar'
+import {DoingTask} from './components/DoingTask'
 import {TaskInputBar} from './components/TaskInputBar'
+import ProgressBar from './components/ProgressBar'
 import ContentButton from './components/ContentButton'
 import TaskSection from './components/TaskSection'
 
@@ -26,6 +27,7 @@ function App() {
   const [result, setResult] = useState<TaskItem[]>([]) // All tasks created
   const [goal, setGoal] = useState<number>(0) // Total number of tasks created
   const [progress, setProgress] = useState<number>(0) // Progress of completed tasks
+  const [task, setTask] = useState<TaskItem>()
 
   // Update progress whenever the result (tasks) change
   useEffect(() => {setProgress(result.filter(item => item.isCompleted).length)}, [result])
@@ -47,7 +49,7 @@ function App() {
   }
 
   // Update the body class when the theme changes
-  useEffect(() => { document.body.className = theme}, [theme])
+  useEffect(() => {document.body.className = theme}, [theme])
 
   // -------------------------------------------------------------------------------------------------------
 
@@ -55,62 +57,89 @@ function App() {
     <ThemeProvider value={{
       theme, setTheme, toggleTheme
     }}>
-    {/* Context for view state */}
-    <ViewProvider value={
-      {
-        view, setView
-      }
-    }>
-    {/* Context for tasks state */}
-      <TasksProvider value={
+      {/* Context for view state */}
+      <ViewProvider value={
         {
-          result, setResult,
-          inputValue, setInputValue,
-          goal, setGoal,
-          progress, setProgress
+          view, setView
         }
       }>
-      {/* Big Container */}
-        <div style={{maxWidth: 600, margin: '0 auto', padding: 16}}>
-          <h2>Bienvenue dans ma "To Do List"!</h2>
-          <TaskInputBar />
-          <ProgressBar />
-          {/* Buttons to toggle views */}
-          <div style={{gap: 8, display: 'flex', marginBottom: 16, justifyContent: 'center'}}>
-            <ContentButton
-              text="Non complétées"
-              value={0}
-              firstcondition={1}
-              secondcondition={0}
-            />
-            <ContentButton
-              text="Complétées"
-              value={1}
-              firstcondition={0}
-              secondcondition={1}
-            />
-          </div>
-          <p>{view === 0 ? 'Voir les tâches en cours' : 'Voir toutes les tâches complétées'}</p>
-          {view === 0 ? (
-            <div>
-              <TaskSection title="tâches urgentes" items={
-                result.filter((item) => item.isUrgent && !item.isCompleted)
-              } />
-              <TaskSection title="tâches non urgentes" items={
-                result.filter((item) => !item.isUrgent && !item.isCompleted)
-              } />
-            </div>
-          ) : (
-            <TaskSection title="tâches complétées" items={
-              result.filter((item) => item.isCompleted)
-            } />
-          )
+        {/* Context for tasks state */}
+        <TasksProvider value={
+          {
+            result, setResult,
+            inputValue, setInputValue,
+            goal, setGoal,
+            progress, setProgress,
+            task, setTask
           }
-        </div>
-      </TasksProvider>
-    </ViewProvider>
+        }>
+          {/* Big Container */}
+          <div style={styles.container}>
+            {/* Big Left Container */}
+            <div style={{...styles.sideContainer, borderRadius: '16px 0px 0px 16px',}}>
+              <h2>My Tasks</h2>
+              <TaskInputBar />
+              <ProgressBar />
+              {/* Buttons to toggle views */}
+              <div style={{gap: 8, display: 'flex', marginBottom: 16, justifyContent: 'center'}}>
+                <ContentButton
+                  text="Non complétées"
+                  value={0}
+                  firstcondition={1}
+                  secondcondition={0}
+                />
+                <ContentButton
+                  text="Complétées"
+                  value={1}
+                  firstcondition={0}
+                  secondcondition={1}
+                />
+              </div>
+              <p>{view === 0 ? 'Voir les tâches en cours' : 'Voir toutes les tâches complétées'}</p>
+              {view === 0 ? (
+                <div>
+                  <TaskSection title="tâches urgentes" items={
+                    result.filter((item) => item.isUrgent && !item.isCompleted)
+                  } />
+                  <TaskSection title="tâches non urgentes" items={
+                    result.filter((item) => !item.isUrgent && !item.isCompleted)
+                  } />
+                </div>
+              ) : (
+                <TaskSection title="tâches complétées" items={
+                  result.filter((item) => item.isCompleted)
+                } />
+              )
+              }
+            </div>
+            {/* End of Big Left Container */}
+            {/* Big Right Container */}
+            <div style={{...styles.sideContainer, borderRadius: '0px 16px 16px 0px',backgroundColor: '#e5d5be',}}>
+              <DoingTask />
+            </div>
+          </div>
+        </TasksProvider>
+      </ViewProvider>
     </ThemeProvider>
   )
+}
+
+const styles = {
+  container : {
+    display: 'flex',
+    flexDirection: 'row',
+  } as const,
+  sideContainer: {
+    minWidth: 600,
+    minHeight: 600,
+    maxHeight: 800,
+    margin: '0 auto',
+    padding: 16,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderStyle: 'solid',
+    backgroundColor: '#ffffff',
+  },
 }
 
 export default App

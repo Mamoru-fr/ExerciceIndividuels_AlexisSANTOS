@@ -11,7 +11,11 @@ type Props = {
 export default function TaskSection({title, items, ulStyle}: Props) {
     return (
         <div>
-            <p>Il y a {items.length} {title}</p>
+            {
+                items.length === 0 ?
+                    null :
+                    <p style={style.ListTitle}>Il y a {items.length} {title}</p>
+            }
             <ul style={{...style.listWrapper, ...ulStyle}}>
                 {items.map((item) => (
                     <Task key={item.id} id={item.id} item={item} />
@@ -22,8 +26,14 @@ export default function TaskSection({title, items, ulStyle}: Props) {
 }
 
 const style = {
-  listWrapper: {
-    paddingInlineStart: 0,
-    textAlign: 'left' as const,
-  },
+    listWrapper: {
+        paddingInlineStart: 0,
+        textAlign: 'left' as const,
+    },
+    ListTitle: {
+        fontWeight: 'bold' as const,
+        fontSize: 16,
+        marginBottom: 8,
+        borderBottom: '2px solid #ccc',
+    }
 };

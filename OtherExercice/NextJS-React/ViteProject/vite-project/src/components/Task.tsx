@@ -1,6 +1,16 @@
+// React
+import React from 'react';
+
+// Types Definition
 import type {TaskItem} from '../constant/task';
+
+// Context
 import {useTasks} from '../context/TasksContext';
 
+// Components
+import {TaskButton} from './TaskButton';
+
+// Props definition
 type Props = {
     id: number | string;
     item: TaskItem;
@@ -8,7 +18,7 @@ type Props = {
 }
 
 export const Task = ({item, id, style}: Props) => {
-    const { setResult } = useTasks();
+    const {setResult, setTask} = useTasks();
 
     const toggleCompleted = () => {
         setResult(prev => prev.map(t => t.id === id ? {...t, isCompleted: !t.isCompleted} : t));
@@ -20,44 +30,42 @@ export const Task = ({item, id, style}: Props) => {
     return (
         <div key={id} style={{...styles.list, ...style}}>
             <div style={styles.taskLeftPart}>
-                <button
-                    type="button"
-                    aria-label={`Completed`}
-                    onClick={() => {
-                        toggleCompleted();
-                    }}
-                    style={{...styles.button.completeButton, backgroundColor: item.isCompleted ? '#30f93050' : 'transparent'}}
-                >
-                    {item.isCompleted ? '✅' : '⭕'}
-                </button>
+                <TaskButton
+                    buttonName='Completed'
+                    buttonText={item.isCompleted ? '✅' : '⭕'}
+                    buttonAction={toggleCompleted}
+                    style={{backgroundColor: item.isCompleted ? '#30f93050' : 'transparent'}}
+                />
                 <span style={styles.itemText}>{item.Text}</span>
             </div>
             <div style={styles.taskRightPart}>
                 {
                     !item.isCompleted ? (
-                        <button
-                            type="button"
-                            aria-label={`Urgent Task`}
-                            onClick={() => {
-                                toggleUrgent();
-                            }}
-                            style={{...styles.button.urgentButton, backgroundColor: item.isUrgent ? '#f5424250' : 'transparent'}}
-                        >
-                            {item.isUrgent ? '‼️' : '⚪'}
-                        </button>
+                        <div>
+                            <TaskButton
+                                buttonName="Do Task"
+                                buttonText='Do Task'
+                                buttonAction={() => setTask(item)}
+                                style={{backgroundColor: '#1b18f190'}}
+                            />
+                            <TaskButton
+                                buttonName='Urgent Task'
+                                buttonText={item.isUrgent ? '‼️' : '⚪'}
+                                buttonAction={toggleUrgent}
+                                style={{backgroundColor: item.isUrgent ? '#f5424250' : 'transparent'}}
+                            />
+                        </div>
                     ) : null
                 }
                 <div>
-                    <button
-                        type='button'
-                        aria-label={`Delete Task`}
-                        onClick={() => {
+                    <TaskButton
+                        buttonName="Delete Task"
+                        buttonText="🗑️"
+                        buttonAction={() => {
                             setResult(prev => prev.filter(t => t.id !== id));
                         }}
-                        style={{...styles.button.urgentButton, backgroundColor: '#f54242'}}
-                    >
-                        🗑️
-                    </button>
+                        style={{backgroundColor: '#f54242'}}
+                    />
                 </div>
             </div>
         </div>
@@ -65,26 +73,6 @@ export const Task = ({item, id, style}: Props) => {
 }
 
 const styles = {
-    button: {
-        completeButton: {
-            padding: '6px 10px',
-            fontSize: 14,
-            backgroundColor: '#30f93050',
-            color: 'white',
-            border: 'none',
-            borderRadius: 6,
-            cursor: 'pointer',
-            marginRight: 8,
-        },
-        urgentButton: {
-            padding: '6px 10px',
-            fontSize: 14,
-            color: 'white',
-            border: 'none',
-            borderRadius: 6,
-            cursor: 'pointer',
-        },
-    },
     itemText: {
         marginRight: 12,
         display: 'inline-block',
